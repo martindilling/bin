@@ -1,0 +1,40 @@
+#!/bin/bash
+
+###############################################################################
+# Handle options
+###############################################################################
+
+# Display the help
+if [ "${1:-}" = "-h" ] || [ "${1:-}" = "--help" ]; then
+  echo -e "
+Merge the master branch into the current branch.
+Updates master branch first.
+
+\e[33mUsage:\e[0m
+  git mergemain
+
+\e[33mOptions:\e[0m
+\e[32m  -h, --help \e[0m Display this help message
+"
+  exit 0;
+fi
+
+
+###############################################################################
+# Script
+###############################################################################
+
+current_branch=$(git currentbranch)
+merge_branch=master
+
+if [ "${current_branch}" = "master" ]; then
+  echo "Cannot merge master into master"
+  exit 1
+fi
+
+if ask "Sure you want to merge 'master' into '${current_branch}'?" -y; then
+  echo "Updating master"
+  git pullmaster
+
+  git merge --ff ${merge_branch}
+fi

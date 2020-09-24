@@ -1,0 +1,74 @@
+#!/bin/bash
+
+###############################################################################
+# Handle options
+###############################################################################
+
+# Display the help
+if [ "${1:-}" = "-h" ] || [ "${1:-}" = "--help" ]; then
+  echo -e "
+This is a general-purpose function to ask Yes/No questions in Bash, either
+with or without a default answer. It keeps repeating the question until it
+gets a valid answer.
+https://gist.github.com/davejamesmiller/1965569
+
+\e[33mUsage:\e[0m
+  ask [-h] <question> {-y|-n}
+
+\e[33mArguments:\e[0m
+  question  The question that should be answered
+
+\e[33mOptions:\e[0m
+\e[32m  -h, --help \e[0m Display this help message
+\e[32m  -y         \e[0m Make Yes the default answer [Y/n]
+\e[32m  -n         \e[0m Make No the default answer [y/N]
+
+\e[33mExamples:\e[0m
+  \e[37m// Only do something if you say yes, defaults to yes\e[0m
+  if ask \"Do you want to do such-and-such?\" -y; then
+    said_yes
+  fi
+
+  \e[37m// Shorter versions\e[0m
+  ask \"Do you want to do such-and-such?\" && said_yes
+
+  ask \"Do you want to do such-and-such?\" || said_no
+"
+  exit 0;
+fi
+
+# Handle what answer to be default
+if [ "${2:-}" = "-y" ]; then
+    prompt="Y/n"
+    default=Y
+elif [ "${2:-}" = "-n" ]; then
+    prompt="y/N"
+    default=N
+else
+    prompt="y/n"
+    default=
+fi
+
+
+###############################################################################
+# Script
+###############################################################################
+
+while true; do
+    # Ask the question (not using "read -p" as it uses stderr not stdout)
+    echo -n "$1 [${prompt}] "
+
+    # Read the answer (use /dev/tty in case stdin is redirected from somewhere else)
+    read reply </dev/tty
+
+    # Set the default if we didn't answer the question
+    if [ -z "$reply" ]; then
+        reply=${default}
+    fi
+
+    # Exit with 0 or 1 depending on the reply
+    case "${reply}" in
+        Y*|y*) exit 0 ;;
+        N*|n*) exit 1 ;;
+    esac
+done

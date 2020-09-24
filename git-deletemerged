@@ -1,0 +1,51 @@
+#!/bin/bash
+
+###############################################################################
+# Handle options
+###############################################################################
+
+# Display the help
+if [ "${1:-}" = "-h" ] || [ "${1:-}" = "--help" ]; then
+  echo -e "
+Delete all the branches that is already merged into master, except for the current branch.
+
+\e[33mUsage:\e[0m
+  git deletemerged [-h] [-y]
+
+\e[33mOptions:\e[0m
+\e[32m  -h, --help \e[0m Display this help message
+\e[32m  -y         \e[0m Answer yes to all confirmations
+"
+  exit 0;
+fi
+
+# Skip all confirmations
+if [ "${1:-}" = "-y" ]; then
+  force=true
+fi
+
+
+###############################################################################
+# Script
+###############################################################################
+
+current_branch=$(git currentbranch)
+# Get all merged branches. Filter out master and the current branch
+# "\b" = start of a word.
+# "$" = end of line.
+# "\|" = or
+branches=$(git branch --merged master | grep -v "\bmaster$\|\b${current_branch}$")
+
+# Handle the empty case
+if [ -z "${branches}" ]; then
+  echo -e "No branches to delete"
+  exit 1;
+fi
+
+# Loop over all the branches we found
+echo "${branches}" | while read -r branch ; do
+  # Confirm before deleting, default to yes
+  if [ "${force}" = true ] || ask "Delete the branch '${branch}'?" -y; then
+    git branch -d "${branch}"
+  fi
+done

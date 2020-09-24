@@ -1,0 +1,41 @@
+#!/bin/bash
+
+###############################################################################
+# Handle options
+###############################################################################
+
+# Display the help
+if [ "${1:-}" = "-h" ] || [ "${1:-}" = "--help" ]; then
+  echo -e "
+Create a new branch from master.
+
+\e[33mUsage:\e[0m
+  git start <branch>
+
+\e[33mArguments:\e[0m
+  branch  The question that should be answered
+
+\e[33mOptions:\e[0m
+\e[32m  -h, --help \e[0m Display this help message
+"
+  exit 0;
+fi
+
+
+###############################################################################
+# Script
+###############################################################################
+
+current_branch=$(git currentbranch)
+
+if [ "${current_branch}" != "master" ]; then
+  echo "Branches should be started from master branch"
+  exit 1
+fi
+
+if [ "$#" -ne 1 ]; then
+  echo "Argument should be branch name only"
+  exit 1
+fi
+
+git checkout -b "$1"

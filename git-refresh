@@ -1,0 +1,30 @@
+#!/bin/bash
+
+###############################################################################
+# Handle options
+###############################################################################
+
+# Display the help
+if [ "${1:-}" = "-h" ] || [ "${1:-}" = "--help" ]; then
+  echo -e "
+After you've published and finished merging your feature, run this to update
+master, delete all merged branches and end up standing on master.
+Now you're ready to run \`git start {branch}\`.
+
+\e[33mUsage:\e[0m
+  git refresh
+
+\e[33mOptions:\e[0m
+\e[32m  -h, --help \e[0m Display this help message
+"
+  exit 0;
+fi
+
+
+###############################################################################
+# Script
+###############################################################################
+
+git checkout master && \
+git pullmaster && \
+git deletemerged

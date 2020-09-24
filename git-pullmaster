@@ -1,0 +1,37 @@
+#!/bin/bash
+
+###############################################################################
+# Handle options
+###############################################################################
+
+# Display the help
+if [ "${1:-}" = "-h" ] || [ "${1:-}" = "--help" ]; then
+  echo -e "
+Update master branch and go back to the current branch.
+
+\e[33mUsage:\e[0m
+  git pullmaster
+
+\e[33mOptions:\e[0m
+\e[32m  -h, --help \e[0m Display this help message
+"
+  exit 0;
+fi
+
+
+###############################################################################
+# Script
+###############################################################################
+
+current_branch=$(git currentbranch)
+
+if [ "${current_branch}" = "master" ]; then
+    git pull && \
+    git remote prune origin
+    exit 0
+fi
+
+git checkout master && \
+git pull && \
+git remote prune origin && \
+git checkout "${current_branch}"

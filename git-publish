@@ -1,0 +1,34 @@
+#!/bin/bash
+
+###############################################################################
+# Handle options
+###############################################################################
+
+# Display the help
+if [ "${1:-}" = "-h" ] || [ "${1:-}" = "--help" ]; then
+  echo -e "
+Push your current branch to origin.
+Both for initial push and to push new commits.
+
+\e[33mUsage:\e[0m
+  git publish
+
+\e[33mOptions:\e[0m
+\e[32m  -h, --help \e[0m Display this help message
+"
+  exit 0;
+fi
+
+
+###############################################################################
+# Script
+###############################################################################
+
+current_branch=$(git currentbranch)
+
+if [ "${current_branch}" = "master" ]; then
+  echo "Cannot publish master branch!"
+  exit 1
+fi
+
+git push -u origin "${current_branch}"
